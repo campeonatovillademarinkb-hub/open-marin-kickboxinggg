@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I Open Internacional Villa de Marín</title>
+    <style>
+        :root {
+            --primario: #003049;
+            --rojo: #d62828;
+            --dorado: #fcbf49;
+            --fondo: #000c14; 
+            --texto: #ffffff;
+            --glass: rgba(255, 255, 255, 0.08);
+        }
+
+        * { box-sizing: border-box; scroll-behavior: smooth; }
+        
+        body { 
+            margin: 0; padding: 0; 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background: radial-gradient(circle at top right, #00253a, var(--fondo));
+            color: var(--texto); 
+            min-height: 100vh;
+        }
+
+        /* NAVEGACIÓN */
+        nav {
+            background: rgba(0, 48, 73, 0.96);
+            height: 75px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5%;
+            position: fixed;
+            top: 0; width: 100%; z-index: 1000;
+            border-bottom: 3px solid var(--rojo);
+            backdrop-filter: blur(12px);
+        }
+        .nav-logo { font-weight: bold; color: var(--dorado); cursor: pointer; font-size: 1.4rem; letter-spacing: 1px; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { color: white; text-decoration: none; font-weight: bold; font-size: 0.9rem; text-transform: uppercase; cursor: pointer; transition: 0.3s; }
+        .nav-links a:hover { color: var(--dorado); transform: translateY(-2px); }
+
+        /* SECCIONES */
+        .page-section { display: none; min-height: 100vh; padding: 120px 20px 60px; animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* CONTENEDORES GLASS */
+        .content-container { max-width: 1000px; margin: 0 auto; }
+        .glass-card { 
+            background: var(--glass); 
+            backdrop-filter: blur(15px); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            padding: 45px; 
+            border-radius: 25px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            line-height: 1.8;
+        }
+
+        h2 { color: var(--dorado); font-size: 2.2rem; margin-bottom: 30px; text-transform: uppercase; border-left: 5px solid var(--rojo); padding-left: 15px; }
+        h3 { color: var(--rojo); margin-top: 35px; font-size: 1.5rem; }
+
+        /* GRID DE PRESENTACIÓN LARGA */
+        .grid-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin: 30px 0; }
+        .info-item { background: rgba(0,0,0,0.3); padding: 25px; border-radius: 20px; border-bottom: 3px solid var(--rojo); }
+
+        /* HORARIO ESTILO TABLA */
+        .schedule-table { width: 100%; border-collapse: collapse; margin-top: 20px; border-radius: 15px; overflow: hidden; }
+        .day-header { background: var(--rojo); color: white; padding: 18px; font-weight: bold; font-size: 1.3rem; text-align: center; }
+        .schedule-table td { padding: 15px; background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .time { color: var(--dorado); font-weight: bold; width: 130px; font-size: 1.1rem; }
+
+        /* PATROCINADORES */
+        .sponsor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; margin-top: 35px; }
+        .sponsor-item { background: white; padding: 25px; border-radius: 20px; text-align: center; transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .sponsor-item img { max-width: 100%; height: 90px; object-fit: contain; }
+        .sponsor-item p { color: var(--primario); font-weight: bold; margin-top: 15px; font-size: 1.1rem; }
+        .sponsor-item:hover { transform: translateY(-10px); }
+
+        /* INICIO */
+        #inicio { 
+            display: flex; 
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1552072092-7f9b8d63efcb?q=80&w=2070&auto=format&fit=crop') center/cover;
+            justify-content: center; align-items: center; text-align: center;
+        }
+        .btn-inscripcion {
+            background: var(--rojo); color: white; padding: 22px 55px; font-size: 1.8rem; font-weight: bold;
+            border: 3px solid white; border-radius: 60px; cursor: pointer; text-transform: uppercase;
+            box-shadow: 0 0 40px rgba(214, 40, 40, 0.6); transition: 0.4s;
+        }
+        .btn-inscripcion:hover { transform: scale(1.05); background: #ff3333; }
+
+        /* MODAL */
+        #modalInscripcion { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); overflow-y: auto; padding: 20px 0; }
+        .modal-cont { background: #fdfdfd; color: #222; margin: auto; padding: 40px; width: 90%; max-width: 550px; border-radius: 25px; position: relative; }
+        input[type="text"], input[type="number"] { width: 100%; padding: 14px; margin: 10px 0; border-radius: 10px; border: 1px solid #ddd; background: #f9f9f9; }
+        .total-pago { font-size: 1.8rem; font-weight: bold; color: var(--rojo); text-align: center; padding: 20px; background: #eee; border-radius: 15px; margin: 20px 0; border: 2px solid var(--rojo); }
+
+        .map-link { 
+            display: inline-block; margin-top: 25px; color: var(--primario); background: var(--dorado); 
+            text-decoration: none; font-weight: bold; padding: 18px 45px; border-radius: 50px; transition: 0.3s;
+        }
+        .map-link:hover { background: white; transform: scale(1.05); }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-logo" onclick="showPage('inicio')">I OPEN VILLA DE MARÍN</div>
+        <div class="nav-links">
+            <a onclick="showPage('acerca')">El Campeonato</a>
+            <a onclick="showPage('horario')">Horario</a>
+            <a onclick="showPage('patrocinadores')">Patrocinadores</a>
+            <a onclick="showPage('contacto')">Contacto</a>
+        </div>
+    </nav>
+
+    <section id="inicio" class="page-section" style="display: flex;">
+        <div>
+            <h1 style="font-size: 3.8rem; margin-bottom: 0;">I OPEN INTERNACIONAL</h1>
+            <p style="font-size: 1.8rem; color: var(--dorado); margin-top: 0; font-weight: bold;">VILLA DE MARÍN 2026</p>
+            <button class="btn-inscripcion" onclick="abrirModal()">¡Inscríbete Ahora!</button>
+        </div>
+    </section>
+
+    <section id="acerca" class="page-section">
+        <div class="content-container">
+            <div class="glass-card">
+                <h2>El Campeonato: Un Nuevo Estándar</h2>
+                <p>El <strong>I Open Internacional Villa de Marín</strong> nace con el firme propósito de ser el epicentro de los deportes de contacto en Galicia. Este ambicioso proyecto busca reunir a los mejores clubes y deportistas en un entorno donde la excelencia técnica y el espíritu deportivo sean los protagonistas indiscutibles.</p>
+
+                <div class="grid-info">
+                    <div class="info-item">
+                        <h3>Nuestra Identidad</h3>
+                        <p>Bajo la supervisión de la <strong>FGKM</strong>, garantizamos un evento profesional con arbitraje colegiado y todas las garantías de seguridad. Queremos que el Villa de Marín sea sinónimo de calidad y respeto mutuo entre todos los participantes.</p>
+                    </div>
+                    <div class="info-item">
+                        <h3>Formación y Base</h3>
+                        <p>Damos una importancia vital a las categorías <strong>No Contact</strong>. Creemos que la cantera es el futuro de nuestro deporte, y por ello hemos diseñado un espacio seguro y motivador para que los más jóvenes vivan su primera experiencia competitiva.</p>
+                    </div>
+                </div>
+
+                <h3>Compromiso con el Deporte</h3>
+                <p>Este campeonato no es solo una suma de combates. Es una plataforma para fomentar valores inquebrantables: la <strong>disciplina</strong> del pesaje, el <strong>esfuerzo</strong> en el tatami y la <strong>humildad</strong> en la victoria. En las modalidades de <strong>Point Fight, Light Contact y Kick Light</strong>, buscamos premiar la inteligencia táctica y el control técnico de cada atleta.</p>
+                
+                <h3>Sede SEI San Narciso</h3>
+                <p>Contamos con las magníficas instalaciones del Colegio SEI San Narciso en Marín, un espacio amplio y moderno capaz de albergar la logística que un Open Internacional requiere, facilitando el flujo de deportistas y garantizando la mejor visibilidad para el público asistente.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="horario" class="page-section">
+        <div class="content-container">
+            <div class="glass-card">
+                <h2>📅 Horario de la Competición</h2>
+                <table class="schedule-table">
+                    <tr><td colspan="2" class="day-header">SÁBADO 14 DE FEBRERO</td></tr>
+                    <tr><td class="time">08:00</td><td>Recepción de Clubs y Acreditaciones</td></tr>
+                    <tr><td class="time">08:15</td><td>Pesaje Oficial y Control Médico Obligatorio</td></tr>
+                    <tr><td class="time">09:00</td><td>Briefing de Arbitraje y Entrenadores</td></tr>
+                    <tr><td class="time">09:30</td><td>Inicio de Eliminatorias (Todas las modalidades)</td></tr>
+                    <tr><td class="time">13:30</td><td>Pausa para Descanso y Comida</td></tr>
+                    <tr><td class="time">15:30</td><td>Reinicio de la Jornada: Semifinales</td></tr>
+                    <tr><td colspan="2" class="day-header">DOMINGO 15 DE FEBRERO</td></tr>
+                    <tr><td class="time">09:30</td><td>Inicio de la Jornada de Finales</td></tr>
+                    <tr><td class="time">13:00</td><td>Ceremonia de Clausura y Entrega de Trofeos</td></tr>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section id="patrocinadores" class="page-section">
+        <div class="content-container">
+            <div class="glass-card">
+                <h2>Nuestros Patrocinadores</h2>
+                <div class="sponsor-grid">
+                    <div class="sponsor-item">
+                        <img src="https://abpsport.com/wp-content/uploads/2019/11/logo-abp.png" alt="ABP Sport">
+                        <p>ABP Sport</p>
+                    </div>
+                    <div class="sponsor-item">
+                        <img src="https://www.concellodemarin.es/wp-content/uploads/2021/05/logo-concello-marin.png" alt="Concello de Marín">
+                        <p>Concello de Marín</p>
+                    </div>
+                    <div class="sponsor-item">
+                        <div style="height: 90px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #003049; font-weight: 900;">SEI San Narciso</div>
+                        <p>Colegio SEI San Narciso</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contacto" class="page-section">
+        <div class="content-container" style="text-align: center;">
+            <div class="glass-card">
+                <h2>Contacto Oficial</h2>
+                <div style="font-size: 1.3rem; margin: 30px 0;">
+                    <p>📧 Email: <a href="mailto:campeonatovillademarinkb@gmail.com" style="color:var(--dorado); text-decoration: none;">campeonatovillademarinkb@gmail.com</a></p>
+                    <p>📸 Instagram: <a href="https://www.instagram.com/campeonatovillademarinkb" target="_blank" style="color:var(--dorado); text-decoration: none;">@campeonatovillademarinkb</a></p>
+                </div>
+                <hr style="opacity: 0.1; margin: 30px 0;">
+                <p>📍 <strong>Lugar:</strong> Pabellón Colegio SEI San Narciso, Marín (Pontevedra).</p>
+                <a href="https://www.google.com/maps/search/Colegio+SEI+San+Narciso+Marin" target="_blank" class="map-link">📍 VER UBICACIÓN EN GOOGLE MAPS</a>
+            </div>
+        </div>
+    </section>
+
+    <div id="modalInscripcion">
+        <div class="modal-cont">
+            <span style="position:absolute; right:20px; top:10px; font-size:35px; cursor:pointer; color: var(--rojo);" onclick="cerrarModal()">×</span>
+            <h2 style="color: var(--primario); margin-top: 0; font-size: 1.8rem;">Formulario de Inscripción</h2>
+            <form id="formFinal">
+                <input type="text" placeholder="Nombre y Apellidos del atleta" required>
+                <input type="text" placeholder="Club al que pertenece" required>
+                <div style="display:flex; gap:10px;">
+                    <input type="number" placeholder="Edad" required>
+                    <input type="number" step="0.1" placeholder="Peso (kg)" required>
+                </div>
+                <div style="background:#f4f4f4; padding:20px; border-radius:15px; margin-top:10px; color: #333; text-align: left;">
+                    <p style="font-weight:bold; margin-top:0;">Modalidades:</p>
+                    <label style="display:block; margin-bottom: 5px;"><input type="checkbox" class="mod-check"> Point Fight</label>
+                    <label style="display:block; margin-bottom: 5px;"><input type="checkbox" class="mod-check"> Light Contact</label>
+                    <label style="display:block; margin-bottom: 5px;"><input type="checkbox" class="mod-check"> Kick Light</label>
+                    <label style="display:block;"><input type="checkbox" class="mod-check"> No Contact</label>
+                </div>
+                <div class="total-pago" id="pagoMostrado">Total: 0€</div>
+                <button type="submit" style="width:100%; padding:18px; background: #1b9e77; color:white; border:none; border-radius:12px; font-weight:bold; font-size: 1.2rem; cursor:pointer;">ENVIAR INSCRIPCIÓN</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(s => s.style.display = 'none');
+            const page = document.getElementById(pageId);
+            page.style.display = (pageId === 'inicio') ? 'flex' : 'block';
+            window.scrollTo(0,0);
+        }
+
+        function abrirModal() { document.getElementById("modalInscripcion").style.display = "block"; document.body.style.overflow = "hidden"; }
+        function cerrarModal() { document.getElementById("modalInscripcion").style.display = "none"; document.body.style.overflow = "auto"; }
+
+        const checks = document.querySelectorAll('.mod-check');
+        checks.forEach(c => c.addEventListener('change', () => {
+            const num = document.querySelectorAll('.mod-check:checked').length;
+            const precios = {0:0, 1:15, 2:25, 3:40, 4:50};
+            document.getElementById('pagoMostrado').innerText = `Total: ${precios[num] || 0}€`;
+        }));
+
+        document.getElementById('formFinal').onsubmit = (e) => {
+            e.preventDefault();
+            alert("¡Registro enviado correctamente!");
+            cerrarModal();
+        }
+    </script>
+</body>
+</html>
